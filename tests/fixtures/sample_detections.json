@@ -1,0 +1,158 @@
+{
+    "detections": [
+        {
+            "frame_number": 1,
+            "timestamp": "2024-01-01T09:00:00.000Z",
+            "pets": [
+                {
+                    "bbox": [120, 180, 220, 280],
+                    "pet_type": "cat",
+                    "confidence": 0.85,
+                    "center": [170, 230]
+                }
+            ]
+        },
+        {
+            "frame_number": 30,
+            "timestamp": "2024-01-01T09:00:01.000Z",
+            "pets": [
+                {
+                    "bbox": [125, 185, 225, 285],
+                    "pet_type": "cat",
+                    "confidence": 0.87,
+                    "center": [175, 235]
+                }
+            ]
+        },
+        {
+            "frame_number": 60,
+            "timestamp": "2024-01-01T09:00:02.000Z",
+            "pets": [
+                {
+                    "bbox": [130, 190, 230, 290],
+                    "pet_type": "cat",
+                    "confidence": 0.82,
+                    "center": [180, 240]
+                }
+            ]
+        },
+        {
+            "frame_number": 90,
+            "timestamp": "2024-01-01T09:00:03.000Z",
+            "pets": [
+                {
+                    "bbox": [320, 120, 380, 180],
+                    "pet_type": "cat",
+                    "confidence": 0.78,
+                    "center": [350, 150]
+                }
+            ]
+        },
+        {
+            "frame_number": 120,
+            "timestamp": "2024-01-01T09:00:04.000Z",
+            "pets": [
+                {
+                    "bbox": [95, 295, 145, 345],
+                    "pet_type": "cat",
+                    "confidence": 0.91,
+                    "center": [120, 320]
+                }
+            ]
+        },
+        {
+            "frame_number": 150,
+            "timestamp": "2024-01-01T09:00:05.000Z",
+            "pets": [
+                {
+                    "bbox": [400, 200, 500, 300],
+                    "pet_type": "dog",
+                    "confidence": 0.76,
+                    "center": [450, 250]
+                }
+            ]
+        },
+        {
+            "frame_number": 180,
+            "timestamp": "2024-01-01T09:00:06.000Z",
+            "pets": [
+                {
+                    "bbox": [200, 280, 250, 330],
+                    "pet_type": "cat",
+                    "confidence": 0.89,
+                    "center": [225, 305]
+                }
+            ]
+        },
+        {
+            "frame_number": 210,
+            "timestamp": "2024-01-01T09:00:07.000Z",
+            "pets": [
+                {
+                    "bbox": [480, 350, 580, 450],
+                    "pet_type": "dog",
+                    "confidence": 0.83,
+                    "center": [530, 400]
+                }
+            ]
+        }
+    ],
+    "activities": [
+        {
+            "timestamp": "2024-01-01T09:00:00.000Z",
+            "activity_type": "detection",
+            "pet_type": "cat",
+            "zone": null,
+            "description": "Pet detected in frame"
+        },
+        {
+            "timestamp": "2024-01-01T09:00:03.000Z",
+            "activity_type": "zone_entry",
+            "pet_type": "cat",
+            "zone": "test_restricted",
+            "description": "Cat entered restricted zone"
+        },
+        {
+            "timestamp": "2024-01-01T09:00:04.000Z",
+            "activity_type": "feeding",
+            "pet_type": "cat",
+            "zone": null,
+            "description": "Cat near food bowl"
+        },
+        {
+            "timestamp": "2024-01-01T09:00:06.000Z",
+            "activity_type": "drinking",
+            "pet_type": "cat",
+            "zone": null,
+            "description": "Cat near water bowl"
+        },
+        {
+            "timestamp": "2024-01-01T09:00:07.000Z",
+            "activity_type": "zone_entry",
+            "pet_type": "dog",
+            "zone": "test_bedroom",
+            "description": "Dog entered bedroom zone"
+        }
+    ],
+    "statistics": {
+        "total_detections": 8,
+        "unique_pets": 2,
+        "eating_events": 1,
+        "drinking_events": 1,
+        "restricted_zone_violations": 1,
+        "zone_visits": {
+            "test_restricted": 1,
+            "test_bedroom": 1
+        },
+        "activity_timeline": {
+            "9": 8
+        }
+    },
+    "metadata": {
+        "video_duration_seconds": 8,
+        "total_frames": 210,
+        "fps": 30,
+        "resolution": [640, 480],
+        "test_scenario": "basic_pet_detection_and_activities"
+    }
+}

@@ -1,0 +1,70 @@
+{
+    "zones": [
+        {
+            "name": "test_kitchen",
+            "coords": [50, 50, 200, 150],
+            "zone_type": "kitchen",
+            "color": [255, 165, 0]
+        },
+        {
+            "name": "test_restricted",
+            "coords": [300, 100, 400, 200],
+            "zone_type": "restricted",
+            "color": [255, 0, 0]
+        },
+        {
+            "name": "test_bedroom",
+            "coords": [450, 300, 600, 450],
+            "zone_type": "bedroom",
+            "color": [0, 0, 255]
+        }
+    ],
+    "bowls": {
+        "food": {
+            "name": "food",
+            "position": [100, 300],
+            "radius": 35,
+            "color": [255, 0, 0]
+        },
+        "water": {
+            "name": "water",
+            "position": [200, 300],
+            "radius": 30,
+            "color": [0, 0, 255]
+        },
+        "treats": {
+            "name": "treats",
+            "position": [150, 350],
+            "radius": 25,
+            "color": [255, 165, 0]
+        }
+    },
+    "performance": {
+        "mode": "balanced",
+        "display_fps": 30.0,
+        "detection_cache_frames": 3,
+        "stats_update_frequency": 10,
+        "heatmap_update_frequency": 10,
+        "frame_skip_ratio": 1
+    },
+    "confidence_threshold": 0.6,
+    "alert_cooldown": 120,
+    "email_config": {
+        "sender_email": "test@example.com",
+        "sender_password": "test_password",
+        "recipient_email": "recipient@example.com",
+        "smtp_server": "smtp.gmail.com",
+        "smtp_port": 587,
+        "enabled": true,
+        "notification_types": {
+            "restricted_zone": true,
+            "feeding": false,
+            "long_absence": true,
+            "unusual_activity": false
+        },
+        "cooldown_period": 300
+    },
+    "model_path": "models/test_yolo12n.pt",
+    "version": "1.0",
+    "created_at": "2024-01-01T12:00:00.000000"
+}
