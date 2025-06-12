@@ -41,12 +41,11 @@ pet_activity_tracker/
 ├── 📄 LICENSE                           # Project license
 │
 ├── 📁 config/                           # Configuration files
-│   ├── 📄 __init__.py
-│   ├── 📄 default_config.json          # Default application settings
+│   └── 📄 default_config.json           # Default application settings
 │
 ├── 📁 models/                           # YOLO model files
 │   ├── 📄 __init__.py
-│   ├── 📄 yolo12n.pt                   # Main YOLO model
+│   └── 📄 yolo12n.pt                    # Main YOLO model
 │
 ├── 📁 backend/                          # Core backend logic
 │   ├── 📄 __init__.py
@@ -54,7 +53,7 @@ pet_activity_tracker/
 │   ├── 📁 core/                         # Core detection and tracking
 │   │   ├── 📄 __init__.py
 │   │   ├── 📄 detector.py               # YOLO pet detection
-│   │    └── 📄 tracker.py                # Activity tracking and zone monitoring
+│   │   └── 📄 tracker.py                # Activity tracking and zone monitoring
 │   │
 │   ├── 📁 data/                         # Data models and statistics
 │   │   ├── 📄 __init__.py
