@@ -32,6 +32,7 @@ An intelligent computer vision-based pet monitoring system that provides real-ti
 - Minimum 4GB RAM (8GB recommended for optimal performance)
 
 ### Folder structure
+```bash
 pet_activity_tracker/
 ├── 📄 main.py                           # Application entry point
 ├── 📄 requirements.txt                  # Python dependencies
@@ -110,6 +111,7 @@ pet_activity_tracker/
 └── 📁 test_videos/                      # Sample videos for testing
    ├── 📄 TestingVideo1.MOV
    └── 📄 TestingVideo2.MOV
+```
 
 ### Installation
 
