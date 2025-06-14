@@ -51,23 +51,34 @@ class PetDetector:
     def update_confidence_threshold(self, threshold: float):
         """Update detection confidence threshold."""
         self.confidence_threshold = max(0.1, min(0.9, threshold))
-
+    
     def detect_pets(self, frame: np.ndarray, frame_number: int) -> List[Detection]:
         """
-        Detect pets in the given frame with improved caching logic.
-
+        Detect pets in the given frame.
+        
         Args:
             frame: Input video frame
             frame_number: Current frame number for caching
-            
+
         Returns:
             List of Detection objects
         """
-        # Check if we can use cached detections (but with stricter conditions)
-        if self._can_use_cached_detections(frame_number):
-            # Only use cache if we're in a performance mode that allows it
-            if self.performance_settings.mode in ["performance", "ultra"]:
+        # Level 1: Processing-level frame skipping
+        mode = self.performance_settings.mode
+
+        if mode == "ultra":
+            if frame_number % 10 != 0:  # Process only every 10th frame
                 return self.cached_detections
+        elif mode == "performance":
+            if frame_number % 5 != 0:  # Process every 5th frame
+                return self.cached_detections
+        elif mode == "balanced":
+            if frame_number % 3 != 0:  # Process every 3rd frame
+                return self.cached_detections
+        
+        # Check if we can use cached detections
+        if self._can_use_cached_detections(frame_number):
+            return self.cached_detections
         
         # Determine processing scale based on performance mode
         scale = self._get_processing_scale()
@@ -117,70 +128,20 @@ class PetDetector:
                         
                         detections.append(detection)
         
-        # Update cache with more intelligent logic
-        self._update_detection_cache(detections, frame_number)
+        # Update cache
+        self.cached_detections = detections
+        self.last_detection_frame = frame_number
         
         return detections
-
-    def _update_detection_cache(self, detections: List[Detection], frame_number: int):
-        """Update detection cache with intelligent invalidation."""
-        # If we have new detections, check if they're significantly different from cached ones
-        if detections and self.cached_detections:
-            # Calculate position changes
-            significant_change = self._detect_significant_movement(detections, self.cached_detections)
-            
-            if significant_change:
-                # Clear cache if significant movement detected
-                self.cached_detections = detections
-                self.last_detection_frame = frame_number
-                print(f"Cache invalidated due to significant movement at frame {frame_number}")
-            else:
-                # Update cache normally
-                self.cached_detections = detections
-                self.last_detection_frame = frame_number
-        else:
-            # Normal cache update
-            self.cached_detections = detections
-            self.last_detection_frame = frame_number
-
-    def _detect_significant_movement(self, new_detections: List[Detection], 
-                                cached_detections: List[Detection]) -> bool:
-        """Detect if there's significant movement between detections."""
-        if len(new_detections) != len(cached_detections):
-            return True
-        
-        # Check if any detection has moved significantly
-        movement_threshold = 50  # pixels
-        
-        for new_det in new_detections:
-            new_center = new_det.center
-            
-            # Find closest cached detection
-            min_distance = float('inf')
-            for cached_det in cached_detections:
-                cached_center = cached_det.center
-                distance = ((new_center[0] - cached_center[0])**2 + 
-                        (new_center[1] - cached_center[1])**2)**0.5
-                min_distance = min(min_distance, distance)
-            
-            if min_distance > movement_threshold:
-                return True
-        
-        return False
-
+    
     def _can_use_cached_detections(self, frame_number: int) -> bool:
-        """Check if cached detections can be used - with stricter conditions."""
+        """Check if cached detections can be used."""
         if self.last_detection_frame is None:
             return False
         
         frame_diff = frame_number - self.last_detection_frame
-        
-        # Reduce cache usage for better detection accuracy
-        # Only use cache for 1-2 frames maximum
-        max_cache_frames = 2 if self.performance_settings.mode == "ultra" else 1
-        
-        return frame_diff < max_cache_frames
-
+        return frame_diff < self.detection_cache_frames
+    
     def _get_processing_scale(self) -> float:
         """Get frame processing scale based on performance mode."""
         scale_map = {

@@ -90,7 +90,7 @@ $RECYCLE.BIN/
 .nfs*
 
 # Configuration files has my mail App password. I skiped but I will push one with less config as sample 
-config/default_config.json
+# config/default_config.json
 
 # Log files
 logs/

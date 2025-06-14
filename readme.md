@@ -33,7 +33,7 @@ An intelligent computer vision-based pet monitoring system that provides real-ti
 
 ### Folder structure
 ```bash
-pet_activity_tracker/
+safezone-pet-monitor/
 ├── 📄 main.py                           # Application entry point
 ├── 📄 requirements.txt                  # Python dependencies
 ├── 📄 README.md                         # Project documentation
@@ -41,11 +41,12 @@ pet_activity_tracker/
 ├── 📄 LICENSE                           # Project license
 │
 ├── 📁 config/                           # Configuration files
-│   └── 📄 default_config.json           # Default application settings
+│   ├── 📄 __init__.py
+│   ├── 📄 default_config.json          # Default application settings
 │
 ├── 📁 models/                           # YOLO model files
 │   ├── 📄 __init__.py
-│   └── 📄 yolo12n.pt                    # Main YOLO model
+│   ├── 📄 yolo12n.pt                   # Main YOLO model
 │
 ├── 📁 backend/                          # Core backend logic
 │   ├── 📄 __init__.py
@@ -53,7 +54,7 @@ pet_activity_tracker/
 │   ├── 📁 core/                         # Core detection and tracking
 │   │   ├── 📄 __init__.py
 │   │   ├── 📄 detector.py               # YOLO pet detection
-│   │   └── 📄 tracker.py                # Activity tracking and zone monitoring
+│   │    └── 📄 tracker.py                # Activity tracking and zone monitoring
 │   │
 │   ├── 📁 data/                         # Data models and statistics
 │   │   ├── 📄 __init__.py

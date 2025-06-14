@@ -35,6 +35,29 @@ class TestPetDetector(unittest.TestCase):
         # Remove temporary model file
         os.unlink(self.temp_model_file.name)
     
+    def _create_mock_box(self, class_id, confidence, bbox):
+        """Helper to create a properly structured mock box."""
+        mock_box = Mock()
+        mock_box.cls = [class_id]
+        mock_box.conf = [confidence]
+        
+        # Create the chain of mocks for xyxy
+        xyxy_tensor = Mock()
+        xyxy_tensor.cpu.return_value.numpy.return_value = np.array(bbox)
+        mock_box.xyxy = [xyxy_tensor]
+        
+        return mock_box
+    
+    def _create_mock_result(self, boxes_list=None):
+        """Helper to create a mock result with proper boxes structure."""
+        mock_result = Mock()
+        if boxes_list is None or len(boxes_list) == 0:
+            mock_result.boxes = None
+        else:
+            # Make boxes iterable by setting it to the list directly
+            mock_result.boxes = boxes_list
+        return mock_result
+    
     @patch('backend.core.detector.YOLO')
     def test_detector_initialization(self, mock_yolo):
         """Test detector initialization with valid model path."""
@@ -91,19 +114,18 @@ class TestPetDetector(unittest.TestCase):
         mock_yolo.return_value = self.yolo_mock
         detector = PetDetector(self.temp_model_file.name)
         
+        # Set to quality mode to avoid frame skipping
+        perf_settings = PerformanceSettings.from_mode("quality")
+        detector.update_performance_settings(perf_settings)
+        
         # Create dummy frame
         frame = np.zeros((480, 640, 3), dtype=np.uint8)
         
-        # Mock detection results
-        mock_box = Mock()
-        mock_box.cls = [15]  # Cat class
-        mock_box.conf = [0.8]
-        mock_box.xyxy = [Mock()]
-        mock_box.xyxy[0].cpu.return_value.numpy.return_value = np.array([100, 100, 200, 200])
+        # Create mock box and result
+        mock_box = self._create_mock_box(15, 0.8, [100, 100, 200, 200])
+        mock_result = self._create_mock_result([mock_box])
         
-        mock_result = Mock()
-        mock_result.boxes = [mock_box]
-        
+        # Set up the mock to return results when called
         self.yolo_mock.return_value = [mock_result]
         
         # First detection (should run YOLO)
@@ -130,8 +152,7 @@ class TestPetDetector(unittest.TestCase):
         frame = np.zeros((480, 640, 3), dtype=np.uint8)
         
         # Mock empty detection results
-        mock_result = Mock()
-        mock_result.boxes = None
+        mock_result = self._create_mock_result([])
         self.yolo_mock.return_value = [mock_result]
         
         detections = detector.detect_pets(frame, frame_number=1)
@@ -145,23 +166,17 @@ class TestPetDetector(unittest.TestCase):
         mock_yolo.return_value = self.yolo_mock
         detector = PetDetector(self.temp_model_file.name)
         
+        # Set to quality mode to avoid frame skipping
+        perf_settings = PerformanceSettings.from_mode("quality")
+        detector.update_performance_settings(perf_settings)
+        
         frame = np.zeros((480, 640, 3), dtype=np.uint8)
         
-        # Mock detection results for cat and dog
-        mock_box1 = Mock()
-        mock_box1.cls = [15]  # Cat
-        mock_box1.conf = [0.8]
-        mock_box1.xyxy = [Mock()]
-        mock_box1.xyxy[0].cpu.return_value.numpy.return_value = np.array([100, 100, 200, 200])
+        # Create mock boxes for cat and dog
+        mock_box1 = self._create_mock_box(15, 0.8, [100, 100, 200, 200])  # Cat
+        mock_box2 = self._create_mock_box(16, 0.7, [300, 300, 400, 400])  # Dog
         
-        mock_box2 = Mock()
-        mock_box2.cls = [16]  # Dog
-        mock_box2.conf = [0.7]
-        mock_box2.xyxy = [Mock()]
-        mock_box2.xyxy[0].cpu.return_value.numpy.return_value = np.array([300, 300, 400, 400])
-        
-        mock_result = Mock()
-        mock_result.boxes = [mock_box1, mock_box2]
+        mock_result = self._create_mock_result([mock_box1, mock_box2])
         self.yolo_mock.return_value = [mock_result]
         
         detections = detector.detect_pets(frame, frame_number=1)
@@ -284,6 +299,29 @@ class TestDetectorIntegration(unittest.TestCase):
         """Clean up integration test fixtures."""
         os.unlink(self.temp_model_file.name)
     
+    def _create_mock_box(self, class_id, confidence, bbox):
+        """Helper to create a properly structured mock box."""
+        mock_box = Mock()
+        mock_box.cls = [class_id]
+        mock_box.conf = [confidence]
+        
+        # Create the chain of mocks for xyxy
+        xyxy_tensor = Mock()
+        xyxy_tensor.cpu.return_value.numpy.return_value = np.array(bbox)
+        mock_box.xyxy = [xyxy_tensor]
+        
+        return mock_box
+    
+    def _create_mock_result(self, boxes_list=None):
+        """Helper to create a mock result with proper boxes structure."""
+        mock_result = Mock()
+        if boxes_list is None or len(boxes_list) == 0:
+            mock_result.boxes = None
+        else:
+            # Make boxes iterable by setting it to the list directly
+            mock_result.boxes = boxes_list
+        return mock_result
+    
     @patch('backend.core.detector.YOLO')
     def test_detection_workflow(self, mock_yolo):
         """Test complete detection workflow."""
@@ -291,6 +329,10 @@ class TestDetectorIntegration(unittest.TestCase):
         mock_yolo_instance = Mock()
         mock_yolo.return_value = mock_yolo_instance
         detector = PetDetector(self.temp_model_file.name)
+        
+        # Set to quality mode to avoid frame skipping issues
+        perf_settings = PerformanceSettings.from_mode("quality")
+        detector.update_performance_settings(perf_settings)
         
         # Create sequence of frames
         frames = [np.random.randint(0, 255, (480, 640, 3), dtype=np.uint8) for _ in range(5)]
@@ -310,35 +352,24 @@ class TestDetectorIntegration(unittest.TestCase):
             # Configure mock before each detection call
             if detection_configs[i] == "one_pet":
                 # Configure for one pet detection
-                mock_box = Mock()
-                mock_box.cls = [15]  # Cat class
-                mock_box.conf = [0.8]
-                mock_box.xyxy = [Mock()]
-                mock_box.xyxy[0].cpu.return_value.numpy.return_value = np.array([100, 100, 200, 200])
-                
-                mock_result = Mock()
-                mock_result.boxes = [mock_box]
+                mock_box = self._create_mock_box(15, 0.8, [100, 100, 200, 200])
+                mock_result = self._create_mock_result([mock_box])
                 mock_yolo_instance.return_value = [mock_result]
                 
             elif detection_configs[i] == "two_pets":
                 # Configure for two pet detections
                 mock_boxes = []
                 for j in range(2):
-                    mock_box = Mock()
-                    mock_box.cls = [15]  # Cat class
-                    mock_box.conf = [0.8]
-                    mock_box.xyxy = [Mock()]
-                    mock_box.xyxy[0].cpu.return_value.numpy.return_value = np.array([100+j*50, 100, 200+j*50, 200])
+                    bbox = [100+j*50, 100, 200+j*50, 200]
+                    mock_box = self._create_mock_box(15, 0.8, bbox)
                     mock_boxes.append(mock_box)
                 
-                mock_result = Mock()
-                mock_result.boxes = mock_boxes
+                mock_result = self._create_mock_result(mock_boxes)
                 mock_yolo_instance.return_value = [mock_result]
                 
             else:
                 # Configure for no detections
-                mock_result = Mock()
-                mock_result.boxes = None
+                mock_result = self._create_mock_result([])
                 mock_yolo_instance.return_value = [mock_result]
             
             # Clear cache to ensure fresh detection for each frame

@@ -1,0 +1,32 @@
+{
+    "zones": [],
+    "bowls": {},
+    "performance": {
+        "mode": "performance",
+        "display_fps": 20.0,
+        "detection_cache_frames": 5,
+        "stats_update_frequency": 20,
+        "heatmap_update_frequency": 15,
+        "frame_skip_ratio": 2
+    },
+    "confidence_threshold": 0.5,
+    "alert_cooldown": 60,
+    "email_config": {
+        "sender_email": "",
+        "sender_password": "",
+        "recipient_email": "",
+        "smtp_server": "smtp.gmail.com",
+        "smtp_port": 465,
+        "enabled": true,
+        "notification_types": {
+            "restricted_zone": true,
+            "feeding": false,
+            "long_absence": true,
+            "unusual_activity": false
+        },
+        "cooldown_period": 300
+    },
+    "model_path": "models/yolo12n.pt",
+    "version": "1.0",
+    "created_at": "2025-06-14T17:57:09.502623"
+}
